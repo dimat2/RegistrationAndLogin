@@ -147,35 +147,6 @@ namespace RegistrationAndLogin.Controllers
             return RedirectToAction("Login", "User");
         }
 
-        public ActionResult ForgotPassword()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult ForgotPassword(string EmailID)
-        {
-            string message = "";
-            bool status = false;
-
-            using (MyDatabaseEntities db = new MyDatabaseEntities())
-            {
-                var account = db.Users.Where(x => x.EmailID == EmailID).FirstOrDefault();
-
-                if (account != null)
-                {
-                    string resetCode = Guid.NewGuid().ToString();
-                }
-                else
-                {
-                    message = "AZ Account nem található";
-                }
-
-            }
-
-            return View();
-        }
-
         [NonAction]
         public bool IsEmailExist(string emailID)
         {
