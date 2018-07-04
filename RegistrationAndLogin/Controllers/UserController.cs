@@ -147,6 +147,35 @@ namespace RegistrationAndLogin.Controllers
             return RedirectToAction("Login", "User");
         }
 
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ForgotPassword(string EmailID)
+        {
+            string message = "";
+            bool status = false;
+
+            using (MyDatabaseEntities db = new MyDatabaseEntities())
+            {
+                var account = db.Users.Where(x => x.EmailID == EmailID).FirstOrDefault();
+
+                if (account != null)
+                {
+                    string resetCode = Guid.NewGuid().ToString();
+                }
+                else
+                {
+                    message = "AZ Account nem található";
+                }
+
+            }
+
+            return View();
+        }
+
         [NonAction]
         public bool IsEmailExist(string emailID)
         {
@@ -159,18 +188,28 @@ namespace RegistrationAndLogin.Controllers
         }
 
         [NonAction]
-        public void SendVerificationLinkEmail(string emailID, string activationCode)
+        public void SendVerificationLinkEmail(string emailID, string activationCode, string EmailFor = "VerifyAccount")
         {
-            var verifyUrl = "/User/VerifyAccount/" + activationCode;
+            var verifyUrl = "/User/" + EmailFor + "/" + activationCode;
             var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyUrl);
 
             var fromEmail = new MailAddress("kiss.peti86@gmail.com", "DotNet Proba");
             var toEmail = new MailAddress(emailID);
 
             var fromEmailPassword = "Almakorte09";
-            string subject = "A regisztráció sikeresen megtörtént.";
 
-            string body = "Sikeres regisztráció." + link;
+
+            string subject = "";
+            string body = "";
+            if (EmailFor == "VerifyAccount")
+            {
+                subject = "A regisztráció sikeresen megtörtént.";
+                body = "Sikeres regisztráció." + link;
+            }
+            else if (EmailFor == "ResetPassword")
+            {
+
+            }
 
             var smtp = new SmtpClient
             {
